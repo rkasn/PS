@@ -19,6 +19,8 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.miguelcatalan.materialsearchview.MaterialSearchView;
+
 import java.util.ArrayList;
 
 import phaseshift.com.demophase.AboutBMS.AboutBMSActivity;
@@ -45,6 +47,9 @@ public class EventsActivity extends AppCompatActivity implements EventsRouter,Na
     ProgressDialog progressDoalog;
     private AppBarEventBinding binding;
     Data[] selectedData;
+    MaterialSearchView searchView;
+    String searchKey1;
+
 
 
     public static final String PREF_KEY_FIRST_START = "com.heinrichreimersoftware.materialintro.demo.PREF_KEY_FIRST_START";
@@ -59,7 +64,6 @@ public class EventsActivity extends AppCompatActivity implements EventsRouter,Na
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         progressDoalog = new ProgressDialog(EventsActivity.this);
         progressDoalog.setMessage("Its loading....");
         progressDoalog.setTitle("Please Wait...");
@@ -117,6 +121,50 @@ public class EventsActivity extends AppCompatActivity implements EventsRouter,Na
                     toast.show();
                 }
             });
+        searchView = (MaterialSearchView) findViewById(R.id.search_view);
+        searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                searchKey1=query;
+               return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                searchKey1=newText;
+                return false;
+            }
+        });
+
+        searchView.setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
+            @Override
+            public void onSearchViewShown() {
+
+//                final ArrayList<Data> search=new ArrayList<Data>();
+//                for (int i = 0; i < manager.DataWrapper.getData().size(); i++) {
+//                    if (search.get(i).getName_of_event().matches(searchView.))
+//                        search.add(manager.DataWrapper.getData().get(i));
+//                }
+//                listView = (ListView) findViewById(R.id.eventListView);
+//                populateListView(search);
+//                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//                    @Override
+//                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                        selectedData[0] = search.get(position);
+//                        if (selectedData[0].getCategory().equalsIgnoreCase("event"))
+//                            goToEventDetails(context, selectedData[0]);
+//                        else
+//                            goToWorkshopDetails(context, selectedData[0]);
+//                    }
+//                });
+            }
+
+            @Override
+            public void onSearchViewClosed() {
+                //Do some magic
+                //CallMe();
+            }
+        });
         }
 
     private void populateListView(ArrayList<Data> data) {
@@ -214,7 +262,7 @@ public class EventsActivity extends AppCompatActivity implements EventsRouter,Na
 //            PreferenceManager.getDefaultSharedPreferences(this).edit()
 //                    .putBoolean(PREF_KEY_FIRST_START, true)
 //                    .apply();
-            Intent intent= new Intent(this, FilterActivity.class);
+            Intent intent = new Intent(this, FilterActivity.class);
             startActivity(intent);
             // onPause();
             return true;
@@ -230,8 +278,14 @@ public class EventsActivity extends AppCompatActivity implements EventsRouter,Na
             finish();
             return true;
         }
+        if (item.getItemId() == R.id.action_search) {
+            searchView.setMenuItem(item);
+        }
         return super.onOptionsItemSelected(item);
     }
+
+
+
 
     @Override
     public void goToMaps(Context context) {
